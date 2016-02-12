@@ -1,6 +1,8 @@
+#!/usr/bin/python
 
-import os
+import os, time
 from cmd import Cmd
+from random import randint
 
 from application.notification import NotificationCenter, IObserver
 from application.python import Null
@@ -16,8 +18,7 @@ from sipsimple.session import Session
 from sipsimple.streams import AudioStream
 from sipsimple.threading.green import run_in_green_thread
 
-
-class TestApplication(object):
+class TenFifty(object):
     implements(IObserver)
 
     def __init__(self):
@@ -38,7 +39,7 @@ class TestApplication(object):
         handler(notification)
 
     def _NH_SIPApplicationDidStart(self, notification):
-        print 'SIP application started'
+        print 'Clem\'s gonna stress...'
 
     def _NH_SIPApplicationDidEnd(self, notification):
         self.quit_event.set()
@@ -79,48 +80,64 @@ class OutgoingCallHandler(object):
     def _NH_SIPSessionGotRingIndication(self, notification):
         print 'Ringing!'
 
+    def _NH_SIPSessionWillStart(self, notification):
+        print 'connessione...'
+
     def _NH_SIPSessionDidStart(self, notification):
-        print 'Session started!'
+        print 'Cioccato :('
+        global catched
+        catched = catched + 1        
 
     def _NH_SIPSessionDidFail(self, notification):
-        print 'Failed to connect'
+        #print 'Failed to connect'
         self.session = None
         NotificationCenter().remove_observer(self, sender=notification.sender)
 
     def _NH_SIPSessionDidEnd(self, notification):
-        print 'Session ended'
+        #print 'Session ended'
         self.session = None
         NotificationCenter().remove_observer(self, sender=notification.sender)
 
 
-application = TestApplication()
+def ringToClem():
+    call_handler.call("sip:victim_number@voip.provider.it") # clem
+    time.sleep(6)
+    call_handler.hangup()
+
+application = TenFifty()
 application.start()
 call_handler = OutgoingCallHandler()
 
+rings = 0
+catched = 0
+interval_from = 60
+interval_to = 180
+interval_reset = 1
+
+try:
+    while True:
+        if catched >= (10 * interval_reset):
+            interval_from = interval_from * 2
+            interval_to = interval_to * 2
+            interval_reset = interval_reset + 1
+        
+        if rings > 0: # skip timeout for the first run    
+            time.sleep(randint(interval_from,interval_to))
+        else:
+            time.sleep(5)
+                       
+        ringToClem()
+        rings = rings + 1
+        os.system('clear')
+        print 'Clem is under goccia cinese now, press CTRL+C to let him free' + '\n\n'
+        print 'Rings total: ', rings
+        print 'Rings catched: ', catched
+        
+except KeyboardInterrupt:
+    pass
 
 class Stop(object):
     pass
 
-class Interface(Cmd):
-    prompt = 'cli> '
-    def emptyline(self):
-        return
-
-    def do_call(self, line):
-        call_handler.call(line)
-
-    def do_hangup(self, line):
-        call_handler.hangup()
-
-    def do_exit(self, line):
-        application.stop()
-        application.quit_event.wait()
-        return Stop
-
-    def postcmd(self, stop, line):
-        if stop is Stop:
-            return True
-
-interface = Interface()
-interface.cmdloop()
-
+application.stop()
+application.quit_event.wait()
