@@ -8,6 +8,7 @@ It's been coded as a joke to annoy one of my mates that didn't want to give me b
 Well, I got the money back after 1 day (and several hundreds of rings), spending just about 3 euros in picked up calls :)
 
 
+
 How it works
 ------------
 The client executes an infinite loop making a call to the specified number and waits 6 seconds to hangup. That's just enought to make a single ring.
@@ -21,6 +22,7 @@ So the more rings the reciver is able to catch, the more harder becomes to pick 
 A counter keep track of how many times the random interval get increased, and the client keeps on increase the interval on every (10*counter) calls that got picked up.
 
 
+
 How to use
 ----------
 First of all you need a SIP account with any of the many providers around.
@@ -32,6 +34,7 @@ You can than configure the credentials of your SIP account globally with the sip
 The script has been coded for a single use case without parametrization in mind, so to set the phone number you have to replace "victim_number" in the source file.
 
 Same thing if you wanna tweak timings and behaviour, you should manually change the vars in the source just before the loop statement.
+
 
 
 Notes
