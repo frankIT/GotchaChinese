@@ -11,7 +11,7 @@ How it works
 The client executes an infinite loop making a call to the specified number and waits 6 seconds to hangup. That's just enought to make a single ring.  
 It waits for a random number (from 60 to 180) of seconds between each loop/ring, so it's hard to pick up the call.  
 If the call gets picked up 10 times, the loop interval get multiplied by 2, so 60 to 180 becomes 120 to 360.  
-So the more rings the reciver is able to catch, the more harder becomes to pick them up.  
+So the more rings the reciver is able to catch, the harder becomes to pick them up.  
 A counter keep track of how many times the random interval get increased, and the client keeps on increase the interval on every (10*counter) calls that got picked up.
 
 
